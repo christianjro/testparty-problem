@@ -1,12 +1,17 @@
 var input2 = '"<View style=\"{\n  \"flex\": 1,\n  \"backgroundColor\": \"#fff\",\n  \"alignItems\": \"center\",\n  \"justifyContent\": \"center\"\n}\" accessibilityActions=\"[\n  {\n    \"name\": \"cut\",\n    \"label\": \"cut\"\n  }\n]\" testparty-id=\"b0c8264b-cce2-4379-b194-5f02d6b0f9f5\"><Text testparty-id=\"c2f33be7-f720-4939-b08c-bc35943f3322\">Open up App.tsx to start working on your app!</Text><Image source=\"{\n  \"uri\": \"https://reactjs.org/logo-og.png\"\n}\" style=\"{\n  \"width\": 400,\n  \"height\": 400\n}\" accessible=\"true\" testparty-id=\"2b3fbd94-3072-47df-bf49-820adff38335\"></Image><Image source=\"{\n  \"uri\": \"https://reactjs.org/logo-og.png\"\n}\" style=\"{\n  \"width\": 400,\n  \"height\": 400\n}\" accessible=\"true\" testparty-id=\"855bb15a-9b5f-4e2d-92d1-4fd286073c71\"></Image><ExpoStatusBar style=\"auto\" testparty-id=\"3f053115-ea55-450a-9d3b-2b2ccc3f8591\"></ExpoStatusBar></View>"';
+
 function parseComponent(component) {
     var openingTagEnd = component.indexOf('>');
     var closingTagStart = component.lastIndexOf('<');
+
     var componentString = component.substring(1, openingTagEnd);
     var componentName = componentString.split(" ")[0].substring(1, componentString.length);
+
     var componentPropertiesString = componentString.indexOf(' ') === -1 ? "" : componentString.substring(componentString.indexOf(' ') + 1, openingTagEnd - 1);
     var componentProperties = parseProperties(componentPropertiesString);
+
     var childrenString = component.substring(openingTagEnd + 1, closingTagStart);
+  
     var componentChildren = childrenString ? parseChildren(childrenString) : null;
     var componentText = childrenString.indexOf('<') === -1 ? childrenString : undefined;
     return {
@@ -14,6 +19,7 @@ function parseComponent(component) {
         properties: componentProperties,
         text: componentText,
         children: componentChildren,
+        ...(componentName === "Image" ? { isImage: true} : {})
     };
 }
 function parseChildren(childrenString, childComponents) {
